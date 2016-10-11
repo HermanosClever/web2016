@@ -11,6 +11,7 @@ exports.findAllClients = function (req, res) {
 
     };
     console.log('GET /clients');
+    console.log(clients);
     res.status(200).jsonp(clients);
   });
 };
@@ -32,7 +33,7 @@ exports.addClient = function (req, res) {
   console.log('POST');
 
   var client = new Client(req.body);
-
+  console.log(client);
   client.save(function (err, clientSaved) {
     if (err) {
       return res.send(err);

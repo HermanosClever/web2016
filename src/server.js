@@ -5,8 +5,8 @@ import methodOverride from 'method-override';
 import bodyParser from 'body-parser';
 import './models/client';
 import ClientCtrl from './controllers/client';
-import './models/user';
-import UserCtrl from './controllers/user';
+import './models/contact';
+import ContactCtrl from './controllers/contact';
 import { match, RoutingContext } from 'react-router';
 import { Provider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
@@ -14,7 +14,7 @@ import configureStore from './store/configure-store';
 import HtmlContainer from './layout/html';
 import RouteContainer from './route';
 import { Meta } from './config/metadata';
-import middleware from './middleware';
+// import middleware from './middleware';
 
 let Html = HtmlContainer;
 let Route = RouteContainer;
@@ -47,7 +47,7 @@ app.use('/static', express.static('public'));
 
 
 // Connection to DB
-
+mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/', function (err, res) {
   if (err) {
     throw err;
@@ -65,17 +65,13 @@ app.use(methodOverride());
 // API routes
 var rooter = express.Router();
 
-rooter.route('/user')
-  .get(UserCtrl.findAllUsers)
-  .post(UserCtrl.addUser);
-
-
-rooter.route('/user/:id')
-  .put(UserCtrl.updateUser)
-  .delete(UserCtrl.deleteUser);
+rooter.route('/contact')
+  .put(ContactCtrl.updateContact)
+  .get(ContactCtrl.getContact);
 
 rooter.route('/client')
-  .get(middleware.ensureAuthenticated, ClientCtrl.findAllClients)
+  .get(ClientCtrl.findAllClients)
+  // .get(middleware.ensureAuthenticated, ClientCtrl.findAllClients)
   .post(ClientCtrl.addClient);
 
 rooter.route('/client/:id')
