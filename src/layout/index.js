@@ -1,7 +1,7 @@
 import React from 'react';
 import Menu from './../component/menu';
 import Footer from './../component/footer';
-import './style.scss';
+import './../../public/styles/style.scss';
 export default function Layout(props) {
 
   return (
