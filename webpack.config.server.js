@@ -31,28 +31,7 @@ module.exports = {
     })
   ],
 
-  module: {
-    preLoaders: [{
-      // NOTE: https://github.com/MoOx/eslint-loader
-      exclude: /node_modules/,
-      loader:  'eslint-loader',
-      test:    /\.jsx?$/
-    }],
-
-    postLoaders: [{
-      // NOTE: https://github.com/babel/babel-loader
-      exclude: /node_modules/,
-      loader:  'babel-loader',
-      test:    /\.jsx?$/,
-
-      query: {
-        presets: [
-          'es2015',
-          'react'
-        ]
-      }
-    }]
-  },
+  module: {},
 
   // SEE: http://jlongster.com/Backend-Apps-with-Webpack--Part-I
   externals: fs.readdirSync('node_modules').reduce(function (accumulator, module) {
@@ -67,7 +46,8 @@ module.exports = {
     extensions: [
       '',
       '.js',
-      '.jsx'
+      '.jsx',
+      'scss'
     ],
 
     // NOTE: https://webpack.github.io/docs/configuration.html#resolve-root

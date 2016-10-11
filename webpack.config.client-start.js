@@ -5,7 +5,7 @@ var config = require('./webpack.config.client');
 var hostname = 'localhost';
 var port     = 3006;
 
-config.cache   = true;
+config.cache   = false;
 config.debug   = true;
 config.devtool = 'inline-source-map';
 
@@ -31,42 +31,48 @@ config.plugins = [
   new webpack.NoErrorsPlugin()
 ];
 
-config.module.postLoaders = [{
-  exclude: /node_modules/,
-  loader:  'babel-loader',
-  test:    /\.jsx?$/,
+config.module.loaders = [
+  {
+    exclude: /node_modules/,
+    loader:  'babel-loader',
+    test:    /\.js?$/,
 
-  query: {
-    cacheDirectory: true,
+    query: {
+      cacheDirectory: true,
 
-    presets: [
-      'es2015',
-      'react'
-    ],
+      presets: [
+        'es2015',
+        'react'
+      ],
 
-    // NOTE: https://github.com/gaearon/babel-plugin-react-transform
-    env: {
-      development: {
-        plugins: [
-          ['react-transform', {
-            transforms: [{
-              transform: 'react-transform-hmr',
+      // NOTE: https://github.com/gaearon/babel-plugin-react-transform
+      env: {
+        development: {
+          plugins: [
+            ['react-transform', {
+              transforms: [{
+                transform: 'react-transform-hmr',
 
-              imports: [
-                'react'
-              ],
+                imports: [
+                  'react'
+                ],
 
-              locals: [
-                'module'
-              ]
+                locals: [
+                  'module'
+                ]
+              }]
             }]
-          }]
-        ]
+          ]
+        }
       }
     }
   }
-}];
-
+,
+  {
+    test: /\.scss$/,
+    loader: 'style!css!sass'
+  }
+]
 config.devServer = {
   hot:    true,
   https:  false,

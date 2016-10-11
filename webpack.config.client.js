@@ -41,43 +41,7 @@ module.exports = {
   ],
 
   module: {
-    preLoaders: [{
-      // NOTE: https://github.com/MoOx/eslint-loader
-      exclude: /node_modules/,
-      loader:  'eslint-loader',
-      test:    /\.jsx?$/
-    }],
-
-    postLoaders: [{
-      // NOTE: https://github.com/babel/babel-loader
-      exclude: /node_modules/,
-      loader:  'babel-loader',
-      test:    /\.jsx?$/,
-
-      query: {
-        presets: [
-          'es2015',
-          'react'
-        ]
-      },
-    }],
-
-    loaders: [
-      {
-        test: /\.scss$/,
-        loaders: ["style", "css", "sass"]
-      },
-      { test: /\.eot/, loader: 'url-loader?limit=100000&mimetype=application/vnd.ms-fontobject' },
-      { test: /\.woff2/, loader: 'url-loader?limit=100000&mimetype=application/font-woff2' },
-      { test: /\.woff/, loader: 'url-loader?limit=100000&mimetype=application/font-woff' },
-      { test: /\.ttf/, loader: 'url-loader?limit=100000&mimetype=application/font-ttf' },
-      { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader?limit=10000&minetype=application/font-woff" }, 
-      { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "file-loader" },
-      { test: /\.css$/, loader: ExtractTextPlugin.extract({
-          fallbackLoader: "style-loader",
-          loader: "css-loader"
-      }) }
-    ]
+   
   },
 
   // NOTE: https://webpack.github.io/docs/configuration.html#resolve
@@ -86,7 +50,8 @@ module.exports = {
     extensions: [
       '',
       '.js',
-      '.jsx'
+      '.jsx',
+      '.scss'
     ],
 
     // NOTE: https://webpack.github.io/docs/configuration.html#resolve-root
