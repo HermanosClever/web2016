@@ -31,17 +31,18 @@ export default class Page extends Component {
     super(props);
     this.state = { name: '', phone: '', email: '', hint: '' };
   }
-  handleChange() {
-    debugger;
+  handleChange(component, value) {
+    console.log(value);
   }
   render() {
     return (
       <section className="table" style={style.container}>
         <div className="table-cell">
           <div className="container">
-            <Input type='text' label='Name' name='name' value={this.state.name} onChange={this.handleChange.bind(this, 'name')} maxLength={16 } />
-              <Input type='text' label='Disabled field' disabled />
-              <Button icon='bookmark' label='Bookmark' accent />
+              <Input type='text' label='Name' name='name' onChange={this.handleChange.bind(this, 'name')} />
+        
+              <Button icon='bookmark' label='Bookmark' accent  mini />
+              <Button icon='inbox' label='Inbox' flat />
               <h1 style={style.header}>
                 BoilerPlate
               </h1>

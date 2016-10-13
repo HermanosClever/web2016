@@ -22,11 +22,8 @@ config.plugins = [
 
   new webpack.HotModuleReplacementPlugin(),
   new webpack.NoErrorsPlugin(),
-   new ExtractTextPlugin('stylesRT.css')
+  new ExtractTextPlugin('stylesRT.css')
 ];
-config.sassLoader= {
-        includePaths: [ '/' ]
-    }
 config.module.postLoaders = [{
   exclude: /node_modules/,
   loader:  'babel-loader',
@@ -41,12 +38,17 @@ config.module.postLoaders = [{
     ]
   }
 },
-  {
+   {
     test: /\.scss$/,
-     loader: ExtractTextPlugin.extract(
-                    'style', // The backup style loader
-                    'css?sourceMap!sass?sourceMap'
-                )
+    exclude:  /public/,
+    loader:ExtractTextPlugin.extract(
+      'style', // The backup style loader
+      'css?sourceMap&modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss!sass'
+    )
+  },{
+    test: /\.scss$/,
+     exclude:  /node_modules/,
+    loader:'css!sass'
   }
 ];
 
