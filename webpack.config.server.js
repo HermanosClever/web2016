@@ -47,7 +47,7 @@ module.exports = {
       '',
       '.js',
       '.jsx',
-      'scss'
+      '.scss'
     ],
 
     // NOTE: https://webpack.github.io/docs/configuration.html#resolve-root
