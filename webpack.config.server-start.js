@@ -1,5 +1,6 @@
 var webpack = require('webpack');
-
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
+ 
 var config = require('./webpack.config.server');
 
 config.cache   = true;
@@ -20,9 +21,12 @@ config.plugins = [
   }),
 
   new webpack.HotModuleReplacementPlugin(),
-  new webpack.NoErrorsPlugin()
+  new webpack.NoErrorsPlugin(),
+   new ExtractTextPlugin('stylesRT.css')
 ];
-
+config.sassLoader= {
+        includePaths: [ '/' ]
+    }
 config.module.postLoaders = [{
   exclude: /node_modules/,
   loader:  'babel-loader',
@@ -39,11 +43,10 @@ config.module.postLoaders = [{
 },
   {
     test: /\.scss$/,
-     loaders: [
-        'isomorphic-style-loader',
-        'css-loader?modules&localIdentName=[name]_[local]_[hash:base64:3]',
-        'postcss-loader'
-      ]
+     loader: ExtractTextPlugin.extract(
+                    'style', // The backup style loader
+                    'css?sourceMap!sass?sourceMap'
+                )
   }
 ];
 

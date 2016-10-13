@@ -39,6 +39,7 @@ export function Html(props) {
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <link rel="apple-touch-icon" href="apple-touch-icon.png" />
       <link rel="stylesheet" href="static/styles/styles.css" type="text/css"/>
+      <link rel="stylesheet" href="http://localhost:3006/server/stylesRT.css" type="text/css"/>
       <link rel="stylesheet" href="static/styles/fonts.css" type="text/css"/>
       <base href="/" />
       {/* Place favicon.ico in the root directory */}

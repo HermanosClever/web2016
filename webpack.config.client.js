@@ -41,7 +41,28 @@ module.exports = {
   ],
 
   module: {
-   
+    preLoaders: [{
+      // NOTE: https://github.com/MoOx/eslint-loader
+      exclude: /node_modules/,
+      loader:  'eslint-loader',
+      test:    /\.jsx?$/
+    }],
+
+    postLoaders: [{
+      // NOTE: https://github.com/babel/babel-loader
+      exclude: /node_modules/,
+      loader:  'babel-loader',
+      test:    /\.jsx?$/,
+
+      query: {
+        presets: [
+          'es2015',
+          'react',
+          'stage-0'
+        ]
+      },
+    }],
+
   },
 
   // NOTE: https://webpack.github.io/docs/configuration.html#resolve
