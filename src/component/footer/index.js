@@ -6,7 +6,6 @@ import styler from 'react-styling';
 const style = styler
 `
   footer
-    position: absolute;
     bottom: 0;
     z-index: 9;
     width: 100%;

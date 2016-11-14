@@ -52,6 +52,30 @@ a{
 		vertical-align: middle;
 	}
 }
+.backoffice{
+    margin:0 auto;
+    max-width: 1000px;
+    > div {
+        margin-top: 70px;
+        .left-menu {
+            display: inline-block;
+            vertical-align: top;
+            > h2 {
+                text-align: left;
+            }
+        }
+        .right-component {
+            display: inline-block;
+            max-width: 700px;
+            padding: 0 110px;
+        }
+    }
+    .editor-background {
+        background-color: #EDEEF2;
+        padding: 20px;
+    }
+}
+
 button{
 	cursor:pointer;
     width: auto;

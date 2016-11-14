@@ -36,12 +36,14 @@ export function Html(props) {
 
       <title>{ metadata ? metadata.title : 'Sin definir'}</title>
 
+      <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <link rel="apple-touch-icon" href="apple-touch-icon.png" />
       <link rel="stylesheet" href="static/styles/styles.css" type="text/css"/>
       <link rel="stylesheet" href="http://localhost:3006/server/stylesRT.css" type="text/css"/>
-          <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet"/>
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+      <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet"/>
       <link rel="stylesheet" href="static/styles/fonts.css" type="text/css"/>
       <base href="/" />
       {/* Place favicon.ico in the root directory */}
