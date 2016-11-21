@@ -13,9 +13,9 @@ import Login from 'component/backoffice/login';
 import Backoffice from 'component/backoffice/backoffice';
 import BackofficeHome from 'component/backoffice/home';
 import Proyectos from 'component/backoffice/proyectos';
-import Clientes from 'component/backoffice/clientes';
-import Nosotros from 'component/backoffice/nosotros';
-import Contacto from 'component/backoffice/contacto';
+import Clientes from 'component/backoffice/clients';
+import Nosotros from 'component/backoffice/us';
+import Contacto from 'component/backoffice/contact';
 import AgregarProyecto from 'component/backoffice/agregar-proyecto';
 
 export default (

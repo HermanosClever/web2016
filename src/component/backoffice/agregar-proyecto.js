@@ -21,12 +21,12 @@ export class AgregarProyecto extends Component {
         paragraph: '',
         img: ''
       }],
-      step: 0
+      step: 1
     };
   }
 
-  changeStep() {
-    this.setState({ step: this.state.step + 1 });
+  changeStep(direction) {
+    this.setState({ step: this.state.step + direction });
   }
 
   changeNewListInfo(element, value) {
@@ -63,77 +63,52 @@ export class AgregarProyecto extends Component {
     this.setState({ newProject: newProjectState, newModule: { id: '', tittle: '', paragraph: '', img: '' }, editingTittle: false });
   }
 
-  loadUpdateMode(listId) {
-    this.state.newProject.lists.map( (list) => {
-      if (list.id === listId) {
-        this.setState({ newList: { id: list.tittle, tittle: list.tittle }, editingTittle: true, updateTittle: true });
-      } 
-    });
-  }
-
-  loadModuleUpdateMode(moduleId) {
-    this.state.newProject.modules.map( (module) => {
-      if (module.id === moduleId) {
-        this.setState({ 
-          newModule: { 
-            id: module.id,
-            tittle: module.tittle,
-            paragraph: module.paragraph,
-            img: module.img
-          },
-          editingTittle: true,
-          updateTittle: true
-        });
-      }
-    });
-  }
-
-  deleteCharacteristic() {
-    let newListsState = this.state.newProject.lists.slice();
-    let aux = newListsState.filter( (list) => list.id !== this.state.newList.id );
-    let newProjectState = Object.assign({}, this.state.newProject, { lists: aux });
-    this.setState({ newProject: newProjectState, editingTittle: false, updateTittle: false });
-  }
-
-  deleteModule() {
-    let newModulesState = this.state.newProject.modules.slice();
-    let aux = newModulesState.filter( (module) => module.id !== this.state.newModule.id );
-    let newProjectState = Object.assign({}, this.state.newProject, { modules: aux });
-    this.setState({ newProject: newProjectState, editingTittle: false, updateTittle: false });
-  }
-
-  correctButton() {
-    if (!this.state.editingTittle) {
-      return <Button label="Crear una característica" flat  onClick={() => this.toogleEditMode()} />;
-    }else {
-      if (this.state.updateTittle ) {
-        return (
-          <div>
-            <Button label="Borrar característica" flat onClick={() => this.deleteCharacteristic()} /> 
-            <Button label="Actualizar característica" flat onClick={() => this.updateCharacteristic()} />
-          </div>
-        );
-      }else {
-        return <Button label="Guardar característica" flat onClick={() => this.addCharacteristic()} />;
-      }
+  loadUpdateMode(ev, listId, el) {
+    if (el.target.innerHTML === 'delete') {
+      ev.deleteCharacteristic(ev, listId);
+    } else {
+      ev.state.newProject.lists.map( (list) => {
+        if (list.id === listId) {
+          ev.setState({ newList: { id: list.tittle, tittle: list.tittle }, editingTittle: true, updateTittle: true });
+        } 
+      });
     }
   }
 
-  modulesCorrectButton() {
-    if (!this.state.editingTittle) {
-      return <Button label="Crear un modulo" flat  onClick={() => this.toogleEditMode()} />;
-    }else {
-      if (this.state.updateTittle ) {
-        return (
-          <div>
-            <Button label="Borrar modulo" flat onClick={() => this.deleteModule()} /> 
-            <Button label="Actualizar modulo" flat onClick={() => this.updateModule()} />
-          </div>
-        );
-      }else {
-        return <Button label="Guardar modulo" flat onClick={() => this.addModule()} />;
-      }
+  loadModuleUpdateMode(ev, moduleId, el) {
+    if (el.target.innerHTML === 'delete') {
+      ev.deleteModule(ev, moduleId);
+    } else {
+      this.state.newProject.modules.map( (module) => {
+        if (module.id === moduleId) {
+          this.setState({ 
+            newModule: { 
+              id: module.id,
+              tittle: module.tittle,
+              paragraph: module.paragraph,
+              img: module.img
+            },
+            editingTittle: true,
+            updateTittle: true
+          });
+        }
+      });
     }
+  }
+
+  deleteCharacteristic(ev, listId) {
+    let newListsState = ev.state.newProject.lists.slice();
+    let aux = newListsState.filter( (list) => list.id !== listId );
+    let newProjectState = Object.assign({}, ev.state.newProject, { lists: aux });
+    ev.setState({ newProject: newProjectState, editingTittle: false, updateTittle: false });
+  }
+
+  deleteModule(ev, moduleId) {
+    debugger;
+    let newModulesState = ev.state.newProject.modules.slice();
+    let aux = newModulesState.filter( (module) => module.id !== moduleId );
+    let newProjectState = Object.assign({}, ev.state.newProject, { modules: aux });
+    ev.setState({ newProject: newProjectState, editingTittle: false, updateTittle: false });
   }
 
   toogleEditMode() {
@@ -161,6 +136,7 @@ export class AgregarProyecto extends Component {
     let aux = Object.assign({}, this.state.newProject);
     aux.lists.map( (list) => {
       if (this.state.newList.id === list.id) {
+        list.id = this.state.newList.tittle;
         list.tittle = this.state.newList.tittle;
       }
     });
@@ -171,6 +147,7 @@ export class AgregarProyecto extends Component {
     let aux = Object.assign({}, this.state.newProject);
     aux.modules.map( (module) => {
       if (this.state.newModule.id === module.id) {
+        module.id = this.state.newModule.tittle;
         module.tittle = this.state.newModule.tittle;
         module.paragraph = this.state.newModule.paragraph;
         module.img = this.state.newModule.img;
@@ -207,10 +184,10 @@ export class AgregarProyecto extends Component {
     let step = this.state.step;
 
     return (
-			<section className="agregar-proyecto">
+			<section className="add-project">
         <article>
           <h2>Añadiendo un nuevo proyecto</h2>
-          { step === 0 ? (
+          { step === 1 ? (
           <div>
             <Input type="text" label="Titulo del nuevo proyecto" value={this.state.newProject.tittle} onChange={this.changeNewProjectInfo.bind(this, 'tittle')}/>
             Descripción del proyecto:
@@ -222,48 +199,59 @@ export class AgregarProyecto extends Component {
               }}
               onChange={this.editorChangeInfo.bind(this, 'paragraph')}
             />
-            <Button label="Siguiente" onClick={ () => this.changeStep() } flat />
           </div>
           ) : null }
-          { step === 1 ? (
+          { step === 2 ? (
             <div>
               <List selectable ripple>
                 <ListSubHeader caption='Lista de características:' />
-                {this.state.newProject.lists.map( (list, index) => <ListItem key={index} caption={list.tittle} onClick={() => this.loadUpdateMode(list.id)} rightIcon='delete' /> )}
+                {this.state.newProject.lists.map( (list, index) => <ListItem key={index} caption={list.tittle} onClick={this.loadUpdateMode.bind(null, this, list.id)} rightIcon='delete' /> )}
               </List>
               { this.state.editingTittle ? (
-                <div>
-                  <Input type='text' label='Titulo de la característica' value={this.state.newList.tittle} onChange={this.changeNewListInfo.bind(this, 'tittle')}/>
+                <div className="modal">
+                  <div className="modal-content">
+                    <Input type='text' label='Titulo de la característica' value={this.state.newList.tittle} onChange={this.changeNewListInfo.bind(this, 'tittle')}/>
+                    <Button label="Cancelar" flat onClick={() => this.toogleEditMode()} />
+                    {this.state.updateTittle ? <Button label="Actualizar característica" flat onClick={() => this.updateCharacteristic()} />
+                    : <Button label="Guardar característica" flat onClick={() => this.addCharacteristic()} />}  
+                  </div>
                 </div>
               ) : null }
-              { this.correctButton() }
-              <Button label="Siguiente" onClick={ () => this.changeStep() } flat />
+              <Button label="Añadir característica" flat  onClick={() => this.toogleEditMode()} />
             </div>
           ) : null }
-          { step === 2 ? (
+          { step === 3 ? (
           <div>
             <List selectable ripple>
               <ListSubHeader caption='Lista de modulos:' />
-              {this.state.newProject.modules.map( (module, index) => <ListItem key={index} caption={module.tittle} onClick={() => this.loadModuleUpdateMode(module.id)} rightIcon='delete' /> )}
+              {this.state.newProject.modules.map( (module, index) => <ListItem key={index} caption={module.tittle} onClick={this.loadModuleUpdateMode.bind(null, this, module.id)} rightIcon='delete' /> )}
             </List>
             { this.state.editingTittle ? (
-            <div>
-              <Input type='text' label='Titulo del modulo' titulo='titulo' value={this.state.newModule.tittle} onChange={this.changeNewModuleInfo.bind(this, 'tittle')}/>
-              <TinyMCE
-                content={this.state.newModule.paragraph}
-                config={{
-                  plugins: 'autolink link image lists print preview',
-                  toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | code | link'
-                }}
-                onChange={this.editorChangeInfo.bind(this, 'newModule')}
-              />
-              <input type='file' accept="image/*" />
+            <div className="modal">
+              <div className="modal-content">
+                <Input type='text' label='Titulo del modulo' titulo='titulo' value={this.state.newModule.tittle} onChange={this.changeNewModuleInfo.bind(this, 'tittle')}/>
+                <TinyMCE
+                  content={this.state.newModule.paragraph}
+                  config={{
+                    plugins: 'autolink link image lists print preview',
+                    toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | code | link'
+                  }}
+                  onChange={this.editorChangeInfo.bind(this, 'newModule')}
+                />
+                <input type='file' accept="image/*" />
+                <Button label="Cancelar" flat onClick={() => this.toogleEditMode()} />
+                {this.state.updateTittle ? <Button label="Actualizar modulo" flat onClick={() => this.updateModule()} />
+                : <Button label="Guardar modulo" flat onClick={() => this.addModule()} />
+                }
+              </div>
             </div>
             ) : null }
-            { this.modulesCorrectButton() }
-            <Button label="Guardar proyecto" onClick={ () => this.props.saveProject(this.state.newProject) } flat />
+            <Button label="Crear un modulo" flat  onClick={() => this.toogleEditMode()} />
           </div>
           ) : null }
+            {step === 1 ? <Button label="Anterior" disabled={true} flat /> : <Button label="Anterior" onClick={() => this.changeStep(-1)} flat />}
+            <div>Paso {step} de 3</div>
+            {step !== 3 ? <Button label="Siguiente" onClick={() => this.changeStep(+1)} flat /> : <Button label={this.props.isUpdate === false ? 'Guardar proyecto' : 'Actualizar proyecto'} onClick={ () => this.props.saveProject(this.state.newProject) } flat />}
         </article>
       </section>
     );

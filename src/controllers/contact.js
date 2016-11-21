@@ -1,4 +1,4 @@
-var mongoose = require('mongoose');
+import mongoose from 'mongoose';
 var Contact  = mongoose.model('CONTACT');
 
 // GET - Return all Users in the DB
@@ -11,6 +11,7 @@ exports.getContact = function (req, res) {
     res.status(200).jsonp(contact);
   });
 };
+
 // PUT - Update a register already exists
 exports.updateContact = function (req, res) {  
   Contact.findOne({ 'token': 'secret' }, function (err, contact) {

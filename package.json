@@ -14,10 +14,12 @@
   "author": "David Dávila",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.15.2",
     "express": "^4.13.3",
     "history": "^1.17.0",
     "react": "^0.14.6",
     "react-dom": "^0.14.6",
+    "react-modal": "^1.5.2",
     "react-redux": "^4.0.6",
     "react-router": "^1.0.3",
     "react-styling": "^1.5.1",

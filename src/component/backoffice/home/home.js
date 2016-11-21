@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import Input from 'react-toolbox/lib/input';
 import Button from 'react-toolbox/lib/button';
 import Snackbar from 'react-toolbox/lib/snackbar';
@@ -7,28 +7,33 @@ export class BackofficeHome extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      h1 : '',
-      h2 : '',
-      slider1: '',
-      slider2: '',
-      slider3: '',
-      slider4: '',
-      snackbar : false
+      homeObject: {},
+      snackbar: false
     };
   }
 
-  handleInput(element, value) {
-    this.setState({ [element] : value });
+  componentDidMount() {
+    this.props.getHomeInfo();
   }
 
-  saveHomeInfo(element) {
-    console.log('Se van a guardar los siguientes datos:');
-    console.log(this.state);
-    this.setState({ snackbar : true });
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps !== this.props) {
+      this.setState({ homeObject: this.props.homeInfo });
+    }
+  }
+
+  bindInputWithState(element, value) {
+    let newHomeState = Object.assign({}, this.state.homeObject, { [element]: value } );
+    this.setState({ homeObject: newHomeState });
+  }
+
+  savePageHome() {
+    this.props.putHome(this.state.homeObject);
+    this.setState({ snackbar: true });
   }
 
   snackbarTimeout(event, instance) {
-    this.setState({ snackbar : false });
+    this.setState({ snackbar: false });
   };
 
   files(element, value) {
@@ -40,15 +45,15 @@ export class BackofficeHome extends Component {
     return (
 			<section className="backoffice-home">
 				<h2>Modificar la página Home</h2>
-        <Input type='text' label='Título' h1='h1' value={this.state.h1} onChange={this.handleInput.bind(this, 'h1')}/>
-        <Input type='text' label='Descripción' h2='h2' value={this.state.h2} onChange={this.handleInput.bind(this, 'h2')}/>
+        <Input type='text' label='Título' h1='h1' value={this.state.homeObject.tittle} onChange={this.bindInputWithState.bind(this, 'tittle')}/>
+        <Input type='text' label='Descripción' h2='h2' value={this.state.homeObject.description} onChange={this.bindInputWithState.bind(this, 'description')}/>
         <div className="img-slider">
           <input type='file' accept="image/*" onChange={this.files.bind(this, 'slider1')} />
           <input type='file' accept="image/*" onChange={this.files.bind(this, 'slider2')} />
           <input type='file' accept="image/*" onChange={this.files.bind(this, 'slider3')} />
           <input type='file' accept="image/*" onChange={this.files.bind(this, 'slider4')} />
         </div>
-        <Button label='Guardar' flat  onClick={this.saveHomeInfo.bind(this)} />			
+        <Button label='Actualizar la página home' flat  onClick={()=> this.savePageHome()} />			
         <Snackbar
           active={this.state.snackbar}
           action='Aceptar'
@@ -63,5 +68,12 @@ export class BackofficeHome extends Component {
     );
   }
 }
+
+BackofficeHome.propTypes = {
+  homeInfo: PropTypes.object.isRequired,
+  getHomeInfo: PropTypes.func.isRequired,
+  putHome: PropTypes.func.isRequired
+};
+
 
 export default BackofficeHome;

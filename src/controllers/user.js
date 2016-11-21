@@ -1,4 +1,4 @@
-var mongoose = require('mongoose');
+import mongoose from 'mongoose';
 var User  = mongoose.model('USER');
 
 // GET - Return all Users in the DB

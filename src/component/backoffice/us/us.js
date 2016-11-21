@@ -5,12 +5,12 @@ import Snackbar from 'react-toolbox/lib/snackbar';
 import { List, ListItem, ListSubHeader } from 'react-toolbox/lib/list';
 import TinyMCE from 'react-tinymce';
 
-export class Nosotros extends Component {
+export class Us extends Component {
 
 	constructor(props) {
   super(props);
   this.state = {
-    tittle: '',
+    tittle: 'Hola',
     paragraph: '',
     modules: [{
       id: 'UI/UX Design',
@@ -31,6 +31,7 @@ export class Nosotros extends Component {
     update : false,
     editing: false,
     snackbar: false,
+    modal: true,
     newModule: {
       id: '',
       tittle: '',
@@ -58,9 +59,7 @@ export class Nosotros extends Component {
   }
 
   savePageInfo() {
-    let aux = this.state.modules.slice();
-    aux.push(this.state.newModule);
-    this.setState({ modules: aux, snackbar: true });
+    this.setState({ snackbar: true });
     console.log('Estado de la aplicación a guardar -->');
     console.log(this.state);
   }
@@ -69,46 +68,31 @@ export class Nosotros extends Component {
     this.setState({ snackbar: false });
   }
 
-  saveParagraphInfo(type, el) {
+  saveParagraphInfo(ev, type, el) {
     let content = el.target.getContent(); 
     if (type === 'paragraph-page') {
-      this.setState({ paragraph: content });
+      ev.setState({ paragraph: content });
     }
     if (type === 'paragraph-module') {
-      let newState = Object.assign({}, this.state.newModule, { paragraph: content });
-      this.setState({ newModule: newState });
+      let newState = Object.assign({}, ev.state.newModule, { paragraph: content });
+      ev.setState({ newModule: newState });
     }
   }
 
   saveModule() {
     let newModulesState = this.state.modules.slice();
-    newModulesState.push({  id: this.state.newModule.tittle, 
-                            tittle: this.state.newModule.tittle,
-                            paragraph: this.state.newModule.paragraph,
-                            img: this.state.newModule.img
-                        });
+    newModulesState.push(this.state.newModule);
     this.setState({ modules: newModulesState,
                     editing: false,
                     newModule: { id: '', tittle: '', paragraph: '', img: '' }
                  });
   }
 
-  correctButton() {
-    if (!this.state.editing) {
-      return <Button label="Agregar un nuevo modulo" flat  onClick={() => this.toogleEditMode()} />;
-    }else {
-      if (this.state.update ) {
-        return <Button label="Actualizar modulo" flat onClick={() => this.update()} />;
-      }else {
-        return <Button label="Guardar modulo" flat onClick={() => this.saveModule()} />;
-      }
-    }
-  }
-
   update() {
     let aux = this.state.modules.slice();
     aux.map(( module )=> {
       if (module.id === this.state.newModule.id) {
+        module.id = this.state.newModule.tittle;
         module.tittle = this.state.newModule.tittle;
         module.paragraph = this.state.newModule.paragraph;
         module.img = this.state.newModule.img;
@@ -118,44 +102,49 @@ export class Nosotros extends Component {
     this.setState({ modules: aux, editing: false, newModule: { id: '', tittle: '', paragraph: '', img: '' } });
   }
 
-  updateMode(id, tittle, paragraph, img) {
-    let aux = { id: id, tittle: tittle, paragraph: paragraph, img: img };
-    this.setState({ update: true, editing: true, newModule: aux });
+  updateMode(ev, id, tittle, paragraph, img, el) {
+    if (el.target.innerHTML === 'delete') {
+      ev.deleteModule(ev, id);
+    } else {
+      let aux = { id: id, tittle: tittle, paragraph: paragraph, img: img };
+      ev.setState({ update: true, editing: true, newModule: aux });      
+    }
+  }
+
+  deleteModule(ev, id) {
+    let aux = ev.state.modules.slice();
+    let newModulesState = aux.filter((module) => module.id !== id);
+    ev.setState({ modules: newModulesState });
   }
 
   render() {
     return (
-			<section className="usPage">
+			<section id="usPage">
         <article>
           <h1>Nosotros</h1>
           <Input type='text' label='Título' tittle='tittle' value={this.state.tittle} onChange={this.handleInputs.bind(this, 'tittle')}/>
-          <TinyMCE
-            content="<p></p>"
-            config={{
-              plugins: 'autolink link image lists print preview',
-              toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | code | link'
-            }}
-            onChange={this.saveParagraphInfo.bind(this, 'paragraph-page')}
-          />
           <List selectable ripple>
             <ListSubHeader caption='Lista de modulos' />
-            { this.state.modules.map( (module, index) => <ListItem key={index} avatar={module.img} caption={module.tittle} onClick={() => this.updateMode(module.id, module.tittle, module.paragraph, module.img)} rightIcon='delete' /> )}
+            { this.state.modules.map( (module, index) => <ListItem key={index} avatar={module.img} caption={module.tittle} onClick={this.updateMode.bind(null, this, module.id, module.tittle, module.paragraph, module.img)} rightIcon='delete' /> )}
           </List>
-          { this.correctButton() }
           { this.state.editing ? (
-            <div>
-              <Input type='text' label='Titulo del modulo' tittle='tittle' value={this.state.newModule.tittle} onChange={this.handleNewModuleInputs.bind(this, 'tittle')} />
-              <input type='file' accept="image/*" label='Añadir imagen del cliente' />
-              <TinyMCE
-                content={this.state.newModule.paragraph}
-                config={{
-                  plugins: 'autolink link image lists print preview',
-                  toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | code | link'
-                }}
-                onChange={this.saveParagraphInfo.bind(this, 'paragraph-module')}
-              />
+            <div className="modal">
+              <div className="modal-content">
+                <Input type='text' label='Titulo del modulo' tittle='tittle' value={this.state.newModule.tittle} onChange={this.handleNewModuleInputs.bind(this, 'tittle')} />
+                <input type='file' accept="image/*" label='Añadir imagen del cliente' />
+                <TinyMCE
+                  content={this.state.newModule.paragraph}
+                  config={{
+                    plugins: 'autolink link image lists print preview',
+                    toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | code | link'
+                  }}
+                  onChange={this.saveParagraphInfo.bind(null, this, 'paragraph-module')}
+                />
+                <Button label='Cancelar' flat onClick={() => this.toogleEditMode()} />
+                <Button label={this.state.update ? 'Actualizar modulo' : 'Guardar modulo'} flat onClick={this.state.update ? () => this.update() : () => this.saveModule()} />
+              </div>
             </div>
-            ) : null		   
+            ) : <Button label="Agregar un nuevo modulo" flat  onClick={() => this.toogleEditMode()} />		   
           }
 
           <Button label='Modificar datos' flat  onClick={() => this.savePageInfo()} />     
@@ -174,4 +163,4 @@ export class Nosotros extends Component {
   }
 }
 
-export default Nosotros;
+export default Us;

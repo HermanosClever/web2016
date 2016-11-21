@@ -45,6 +45,26 @@ exports.addClient = function (req, res) {
 
 // PUT - Update a register already exists
 exports.updateClient = function (req, res) {  
+  Client.findOne({ '_id' : req.params.id }, function (err, client) {
+    if (err) {
+      return res.send(404);
+
+    };
+    client.name = req.body.name;
+    client.img = req.body.img;
+    client.url = req.body.url;
+    client.save(function (errSave) {
+      if (errSave) {
+        return res.send(404);
+
+      };
+      res.status(200).jsonp(client);
+    });
+  });
+};
+
+// PUT - Update a register already exists
+exports.updateClient2 = function (req, res) {  
   Client.findOne({ 'name' : req.params.id }, function (err, client) {
     if (err) {
       return res.send(404);

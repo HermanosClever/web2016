@@ -7,6 +7,8 @@ import './models/client';
 import ClientCtrl from './controllers/client';
 import './models/contact';
 import ContactCtrl from './controllers/contact';
+import './models/home';
+import HomeCtrl from './controllers/home';
 import { match, RoutingContext } from 'react-router';
 import { Provider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
@@ -65,6 +67,10 @@ app.use(methodOverride());
 // API routes
 var rooter = express.Router();
 
+rooter.route('/backoffice-home')
+  .get(HomeCtrl.getHomeInfo)
+  .put(HomeCtrl.updateHome);
+  
 rooter.route('/contact')
   .put(ContactCtrl.updateContact)
   .get(ContactCtrl.getContact);

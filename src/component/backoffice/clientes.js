@@ -6,21 +6,21 @@ import { List, ListItem, ListSubHeader } from 'react-toolbox/lib/list';
 
 export class Clientes extends Component {
 
-	constructor(props) {
+constructor(props) {
   super(props);
   this.state = {
     clients: [{
-      id: 0,
+      id: 'Vodafone',
       tittle: 'Vodafone',
       img: 'https://dl.dropboxusercontent.com/u/2247264/assets/m.jpg',
       url: 'vodafone.com'
     }, {
-      id: 1,
+      id: 'La gula',
       tittle: 'La gula',
       img: 'https://dl.dropboxusercontent.com/u/2247264/assets/o.jpg',
       url: 'lagula.com'
     }, {
-      id:2,
+      id: 'Correos',
       tittle: 'Correos',
       img: 'https://dl.dropboxusercontent.com/u/2247264/assets/r.jpg',
       url: 'correos.es'
@@ -58,16 +58,17 @@ export class Clientes extends Component {
                   });
   }
 
-  deleteClient(clientId) {
-    let clientsState = this.state.clients.slice();
+  deleteClient(ev, clientId) {
+    let clientsState = ev.state.clients.slice();
     let newClientsState = clientsState.filter( client => client.id !== clientId);
-    this.setState({ clients: newClientsState, editing: false }); 
+    ev.setState({ clients: newClientsState, editing: false }); 
   }
 
   sendUpdate(clientId) {
     let newStateClients = this.state.clients.slice();
     newStateClients.map( client => {
       if (client.id === clientId) {
+        client.id = this.state.newClient.tittle;
         client.tittle = this.state.newClient.tittle;
         client.img = this.state.newClient.img;
         client.url = this.state.newClient.url;
@@ -76,21 +77,25 @@ export class Clientes extends Component {
     });
   }
 
-  loadUpdateMode(clientId) {
-    this.state.clients.map( client => {
-      if (client.id === clientId) {
-        let aux = {
-          id: client.id,
-          tittle: client.tittle,
-          img: client.img,
-          url: client.url
-        };
-        this.setState({ editing: true,
-                        newClient: aux,
-                        update: client.id
-                      });
-      }
-    });
+  loadUpdateMode(ev, clientId, el) {
+    if (el.target.innerHTML === 'delete') {
+      ev.deleteClient(ev, clientId);
+    } else {
+      ev.state.clients.map( client => {
+        if (client.id === clientId) {
+          let aux = {
+            id: client.id,
+            tittle: client.tittle,
+            img: client.img,
+            url: client.url
+          };
+          ev.setState({ editing: true,
+                          newClient: aux,
+                          update: client.id
+                        });
+        }
+      });
+    }
   }
 
   snackbarTimeout() {
@@ -111,16 +116,21 @@ export class Clientes extends Component {
         <article>
           <List selectable ripple>
             <ListSubHeader caption="Lista de clientes" />
-            {this.state.clients.map( (client, index) => <ListItem key={index} onClick={() => this.loadUpdateMode(client.id)} avatar={client.img} caption={client.tittle} rightIcon="delete" /> )}
+            {this.state.clients.map( (client, index) => <ListItem key={index} onClick={this.loadUpdateMode.bind(null, this, client.id)} avatar={client.img} caption={client.tittle} rightIcon="delete" /> )}
           </List>
-          <Button label="Agregar un nuevo cliente" flat  onClick={() => this.toogleEditMode()} />
+          <Button label="Añadir nuevo cliente" flat  onClick={() => this.toogleEditMode()} />
           { this.state.editing ? (
-          <div>
-            <Input type="text" label="Titulo" tittle="tittle" value={this.state.newClient.tittle} onChange={this.changeClientInfo.bind(this, 'tittle')}/>
-            <input type="file" accept="image/*" />
-            <Input type="text" label="Url" url='url' value={this.state.newClient.url} onChange={this.changeClientInfo.bind(this, 'url')}/>
-            {this.state.update === false ? (<Button label="Guardar" flat  onClick={() => this.addClient()} />)
-            : (<div><Button label="Borrar" flat onClick={() => this.deleteClient(this.state.update)} /><Button label="Actualizar" flat onClick={() => this.sendUpdate(this.state.update)} /></div>)}
+          <div className="modal">
+            <div className="modal-content">
+              <Input type="text" label="Titulo" tittle="tittle" value={this.state.newClient.tittle} onChange={this.changeClientInfo.bind(this, 'tittle')}/>
+              <input type="file" accept="image/*" />
+              <Input type="text" label="Url" url='url' value={this.state.newClient.url} onChange={this.changeClientInfo.bind(this, 'url')}/>
+              <Button label="Cancelar" flat onClick={() => this.toogleEditMode()} />
+              {this.state.update === false ? (
+                <Button label="Guardar" flat  onClick={() => this.addClient()} />
+              ) : (
+                <Button label="Actualizar" flat onClick={() => this.sendUpdate(this.state.update)} />)}
+            </div>
           </div> )
           : null 
           }

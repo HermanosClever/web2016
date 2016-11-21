@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import Login from './login';
 import Home from './home';
 import Proyectos from './proyectos';
-import Clientes from './clientes';
-import Nosotros from './nosotros';
-import Contacto from './contacto';
+import Clientes from './clients';
+import Nosotros from './us';
+import Contacto from './contact';
 
 export class Backoffice extends Component {
 
