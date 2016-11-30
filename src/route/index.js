@@ -12,11 +12,11 @@ import Setting from 'view/setting';
 import Login from 'component/backoffice/login';
 import Backoffice from 'component/backoffice/backoffice';
 import BackofficeHome from 'component/backoffice/home';
-import Proyectos from 'component/backoffice/proyectos';
+import Proyectos from 'component/backoffice/projects';
 import Clientes from 'component/backoffice/clients';
 import Nosotros from 'component/backoffice/us';
 import Contacto from 'component/backoffice/contact';
-import AgregarProyecto from 'component/backoffice/agregar-proyecto';
+import AgregarProyecto from 'component/backoffice/projects/agregar-proyecto';
 
 export default (
   <Route path="/" component={Layout}>

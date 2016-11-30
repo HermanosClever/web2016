@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Login from './login';
 import Home from './home';
-import Proyectos from './proyectos';
+import Proyectos from './projects';
 import Clientes from './clients';
 import Nosotros from './us';
 import Contacto from './contact';

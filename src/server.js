@@ -9,6 +9,10 @@ import './models/contact';
 import ContactCtrl from './controllers/contact';
 import './models/home';
 import HomeCtrl from './controllers/home';
+import './models/us';
+import UsCtrl from './controllers/us';
+import './models/project';
+import ProjectCtrl from './controllers/project';
 import { match, RoutingContext } from 'react-router';
 import { Provider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
@@ -88,8 +92,26 @@ rooter.route('/client/:id')
 rooter.route('/client/:id/validate')
   .post(ClientCtrl.validateClient);
 
-app.use('/api', rooter);
+rooter.route('/us')
+  .get(UsCtrl.getUsInfo);
 
+rooter.route('/us/modules/:id')
+  .put(UsCtrl.deleteModule)
+  .post(UsCtrl.saveModule);
+
+rooter.route('/us/updateModule/:id')
+  .put(UsCtrl.updateModule);
+
+rooter.route('/us/updateus/:id')
+  .put(UsCtrl.updateUs);
+
+rooter.route('/projects')
+  .get(ProjectCtrl.getProjects);
+
+rooter.route('/project/:id')
+  .post(ProjectCtrl.addProject);
+
+app.use('/api', rooter);
 
 // WEB
 app.get('*', function (req, res) {

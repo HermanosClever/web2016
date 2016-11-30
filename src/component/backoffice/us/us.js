@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import Input from 'react-toolbox/lib/input';
 import Button from 'react-toolbox/lib/button';
 import Snackbar from 'react-toolbox/lib/snackbar';
@@ -8,41 +8,53 @@ import TinyMCE from 'react-tinymce';
 export class Us extends Component {
 
 	constructor(props) {
-  super(props);
-  this.state = {
-    tittle: 'Hola',
-    paragraph: '',
-    modules: [{
-      id: 'UI/UX Design',
-      tittle: 'UI/UX Design',
-      paragraph: 'asdasd',
-      img: 'https://daks2k3a4ib2z.cloudfront.net/56ab386e6204e5ff5f8b0e2e/570df92fa6123f7a3b4a5ccf_ui_ux_illustration.png'
-    }, {
-      id: 'Estrategia Digital',
-      tittle: 'Estrategia Digital',
-      paragraph: 'asdasd',
-      img: 'https://daks2k3a4ib2z.cloudfront.net/56ab386e6204e5ff5f8b0e2e/570df95fefd5192b3b7ad910_strategy_illustration.png'
-    }, {
-      id: 'Desarrollos a medida',
-      tittle: 'Desarrollos a medida',
-      paragraph: 'asdasd',
-      img: 'https://daks2k3a4ib2z.cloudfront.net/56ab386e6204e5ff5f8b0e2e/570df9a6e725ba4e712c85c3_development_illustration.png'
-    }],
-    update : false,
-    editing: false,
-    snackbar: false,
-    modal: true,
-    newModule: {
-      id: '',
-      tittle: '',
+    super(props);
+    this.state = {
+      usInfo: props.usInfo,
+      tittle: 'Hola',
       paragraph: '',
-      img: ''
+      modules: [{
+        id: 'UI/UX Design',
+        tittle: 'UI/UX Design',
+        paragraph: 'asdasd',
+        img: 'https://daks2k3a4ib2z.cloudfront.net/56ab386e6204e5ff5f8b0e2e/570df92fa6123f7a3b4a5ccf_ui_ux_illustration.png'
+      }, {
+        id: 'Estrategia Digital',
+        tittle: 'Estrategia Digital',
+        paragraph: 'asdasd',
+        img: 'https://daks2k3a4ib2z.cloudfront.net/56ab386e6204e5ff5f8b0e2e/570df95fefd5192b3b7ad910_strategy_illustration.png'
+      }, {
+        id: 'Desarrollos a medida',
+        tittle: 'Desarrollos a medida',
+        paragraph: 'asdasd',
+        img: 'https://daks2k3a4ib2z.cloudfront.net/56ab386e6204e5ff5f8b0e2e/570df9a6e725ba4e712c85c3_development_illustration.png'
+      }],
+      update : false,
+      editing: false,
+      snackbar: false,
+      modal: true,
+      newModule: {
+        id: '',
+        tittle: '',
+        paragraph: '',
+        img: ''
+      }
+    };
+  }
+
+  componentDidMount() {
+    this.props.getUsInfo();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps !== this.props) {
+      this.setState({ usInfo: this.props.usInfo });
     }
-  };
-}
+  }
 
   handleInputs(element, value) {
-    this.setState({ [element]: value });
+    let newState = Object.assign({}, this.state.usInfo, { [element]: value });
+    this.setState({ usInfo: newState });
   }
 
   handleNewModuleInputs(element, value) {
@@ -61,7 +73,7 @@ export class Us extends Component {
   savePageInfo() {
     this.setState({ snackbar: true });
     console.log('Estado de la aplicación a guardar -->');
-    console.log(this.state);
+    this.props.updateUs(this.state.usInfo._id, { tittle: this.state.usInfo.tittle, paragraph: this.state.usInfo.paragraph });
   }
 
   snackbarTimeout() {
@@ -80,41 +92,25 @@ export class Us extends Component {
   }
 
   saveModule() {
-    let newModulesState = this.state.modules.slice();
-    newModulesState.push(this.state.newModule);
-    this.setState({ modules: newModulesState,
+    this.props.saveModule(this.state.newModule, this.state.usInfo._id);
+    this.setState({ 
                     editing: false,
                     newModule: { id: '', tittle: '', paragraph: '', img: '' }
                  });
   }
 
   update() {
-    let aux = this.state.modules.slice();
-    aux.map(( module )=> {
-      if (module.id === this.state.newModule.id) {
-        module.id = this.state.newModule.tittle;
-        module.tittle = this.state.newModule.tittle;
-        module.paragraph = this.state.newModule.paragraph;
-        module.img = this.state.newModule.img;
-      }
-    });
-
-    this.setState({ modules: aux, editing: false, newModule: { id: '', tittle: '', paragraph: '', img: '' } });
+    this.props.updateModule(this.state.usInfo._id, this.state.newModule);
+    this.setState({ editing: false, newModule: { id: '', tittle: '', paragraph: '', img: '' } });
   }
 
   updateMode(ev, id, tittle, paragraph, img, el) {
     if (el.target.innerHTML === 'delete') {
-      ev.deleteModule(ev, id);
+      ev.props.deleteModule(ev.state.usInfo._id, id);
     } else {
       let aux = { id: id, tittle: tittle, paragraph: paragraph, img: img };
       ev.setState({ update: true, editing: true, newModule: aux });      
     }
-  }
-
-  deleteModule(ev, id) {
-    let aux = ev.state.modules.slice();
-    let newModulesState = aux.filter((module) => module.id !== id);
-    ev.setState({ modules: newModulesState });
   }
 
   render() {
@@ -122,10 +118,10 @@ export class Us extends Component {
 			<section id="usPage">
         <article>
           <h1>Nosotros</h1>
-          <Input type='text' label='Título' tittle='tittle' value={this.state.tittle} onChange={this.handleInputs.bind(this, 'tittle')}/>
+          <Input type='text' label='Título' tittle='tittle' value={this.state.usInfo.tittle} onChange={this.handleInputs.bind(this, 'tittle')}/>
           <List selectable ripple>
             <ListSubHeader caption='Lista de modulos' />
-            { this.state.modules.map( (module, index) => <ListItem key={index} avatar={module.img} caption={module.tittle} onClick={this.updateMode.bind(null, this, module.id, module.tittle, module.paragraph, module.img)} rightIcon='delete' /> )}
+            { this.state.usInfo.modules.map( (module, index) => <ListItem key={index} avatar={module.img} caption={module.tittle} onClick={this.updateMode.bind(null, this, module._id, module.tittle, module.paragraph, module.img)} rightIcon='delete' /> )}
           </List>
           { this.state.editing ? (
             <div className="modal">
@@ -162,5 +158,14 @@ export class Us extends Component {
     );
   }
 }
+
+Us.propTypes = {
+  usInfo: PropTypes.object.isRequired,
+  getUsInfo: PropTypes.func.isRequired,
+  saveModule: PropTypes.func.isRequired,
+  deleteModule: PropTypes.func.isRequired,
+  updateModule: PropTypes.func.isRequired,
+  updateUs: PropTypes.func.isRequired
+};
 
 export default Us;

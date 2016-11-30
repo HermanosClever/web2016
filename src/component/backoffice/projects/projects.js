@@ -1,52 +1,18 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import Input from 'react-toolbox/lib/input';
 import Button from 'react-toolbox/lib/button';
 import Snackbar from 'react-toolbox/lib/snackbar';
 import AgregarProyecto from './agregar-proyecto';
 import { List, ListItem, ListSubHeader } from 'react-toolbox/lib/list';
 
-export class Proyectos extends Component {
+export class Projects extends Component {
   constructor(props) {
     super(props);
     this.saveProject = this.saveProject.bind(this);
     this.updateProjectFunc = this.updateProjectFunc.bind(this);
     this.state = {
+      projectInfo: props.projectInfo,
       tittle : '',
-      projects: [{
-        id: 'Correos',
-        tittle: 'Correos',
-        img: 'https://daks2k3a4ib2z.cloudfront.net/56ab386e6204e5ff5f8b0e2e/570536ec26fbd26467871cce_tarjeta_correos.jpg',
-        paragraph: 'La misión era clara, Correos tenía un nuevo producto, una tarjeta prepago dirigida a todos los públicos y nos pidió que diseñáramos el escaparate web y la experiencia de usuario y visual de su aplicación móvil.',
-        lists: [{
-          id: 'Experiencia de usuarios',
-          tittle:'Experiencia de usuarios'
-        }, {
-          id: 'Diseño de app',
-          tittle: 'Diseño de app',
-        }],
-        modules: [{
-          tittle: 'Modulo',
-          paragraph: 'asdasd',
-          img: ''
-        }]
-      }, {
-        id: 'Zeleb',
-        tittle: 'Zeleb',
-        img: 'https://daks2k3a4ib2z.cloudfront.net/56ab386e6204e5ff5f8b0e2e/570536ec26fbd26467871cce_tarjeta_correos.jpg',
-        paragraph: 'La misión era clara, Correos tenía un nuevo producto, una tarjeta prepago dirigida a todos los públicos y nos pidió que diseñáramos el escaparate web y la experiencia de usuario y visual de su aplicación móvil.',
-        lists: [{
-          id: 'Experiencia de usuarios',
-          tittle:'Experiencia de usuarios'
-        }, {
-          id: 'Diseño de app',
-          tittle: 'Diseño de app',
-        }],
-        modules: [{
-          tittle: 'Modulo',
-          paragraph: 'asdasd',
-          img: ''
-        }]
-      }],
       editing : false,
       snackbar : false,
       projectUpdateId: false,
@@ -61,8 +27,19 @@ export class Proyectos extends Component {
     };
   }
 
+  componentDidMount() {
+    this.props.getProjectState();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps !== this.props) {
+      this.setState({ projectInfo: this.props.projectInfo });
+    }
+  }
+
   handleChange(element, value) {
-    this.setState({ [element] : value });
+    var aux = Object.assign({}, this.state.projectInfo, { [element]: value });
+    this.setState({ projectInfo: aux });
   }
 
   handleClick(editing) {
@@ -84,10 +61,7 @@ export class Proyectos extends Component {
   }
 
   saveProject(project) {
-    let newProjectState = this.state.projects.slice();
-    newProjectState.push(project); 
     this.setState({ 
-      projects: newProjectState,
       editing: false,
       editingProject: {
         id: '',
@@ -98,6 +72,7 @@ export class Proyectos extends Component {
         modules: []
       }
     });
+    this.props.addProject(project, this.state.projectInfo._id);
   }
 
   updateProjectFunc(updatedProject) {
@@ -125,9 +100,9 @@ export class Proyectos extends Component {
     if (el.target.innerHTML === 'delete') {
       ev.deleteProject(ev, projectId);
     } else {
-      let editingProject = ev.state.projects.slice();
+      let editingProject = ev.state.projectInfo.projects.slice();
       editingProject.map( (project) =>{
-        if (project.id === projectId) {
+        if (project._id === projectId) {
           ev.setState({ editing: true, editingProject: project, projectUpdateId: projectId });
         }
       });
@@ -146,10 +121,10 @@ export class Proyectos extends Component {
         { !this.state.editing ? (
           <article>
             <h2>Configuracion de la página Proyectos</h2>
-            <Input type='text' label='Titulo' value={this.state.tittle} onChange={this.handleChange.bind(this, 'tittle')}/>
+            <Input type='text' label='Titulo' value={this.state.projectInfo.tittle} onChange={this.handleChange.bind(this, 'tittle')}/>
             <List selectable ripple>
               <ListSubHeader caption='Lista de proyectos' />
-              {this.state.projects.map( (project, index) => <ListItem key={index} avatar={project.img} onClick={this.updateProject.bind(null, this, project.id) } caption={project.tittle} rightIcon='delete' /> )}
+              {this.state.projectInfo.projects.map( (project, index) => <ListItem key={index} avatar={project.img} onClick={this.updateProject.bind(null, this, project._id) } caption={project.tittle} rightIcon='delete' /> )}
             </List>
             <Button label='Añadir un nuevo proyecto' flat  onClick={() => this.handleClick(this.state.editing)} />
             <Button label='Modificar la pagina Proyectos' flat  onClick={() => this.handleSave()} />   
@@ -169,4 +144,10 @@ export class Proyectos extends Component {
   }
 }
 
-export default Proyectos;
+Projects.propTypes = {
+  projectInfo: PropTypes.object.isRequired,
+  getProjectState: PropTypes.func.isRequired,
+  addProject: PropTypes.func.isRequired
+};
+
+export default Projects;
